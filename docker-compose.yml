@@ -54,22 +54,10 @@ services:
         image: redis:alpine
         container_name: redis_fidibo
         restart: unless-stopped
-        environment:
-            - REDIS_PASSWORD='${REDIS_PASSWORD}'
         ports:
             - '${REDIS_HOST_PORT:-6379}:6379'
         volumes:
             - ./deployment/redis_data:/date
         networks:
             - fidibo
-    # redis:
-    #     image: redis:alpine
-    #     container_name: redis_fidibo
-    #     command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
-    #     volumes:
-    #         - ./data/redis:/data
-    #     ports:
-    #         - "8002:6379"
-    #     networks:
-    #         - fidibo
 

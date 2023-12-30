@@ -12,5 +12,5 @@ RUN apk update && apk add \
 RUN docker-php-ext-install pdo pdo_mysql
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-ADD ./deployment/php/php.ini /usr/local/etc/php
+
 RUN chmod 777 -R /var/www/app
