@@ -1,0 +1,75 @@
+version: '3'
+
+networks:
+    fidibo:
+        driver: bridge
+
+services:
+    nginx:
+        image: nginx:alpine
+        container_name: nginx_fidibo
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "${APP_PORT}:80"
+        volumes:
+            - .:/var/www/app
+            - ./deployment/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - php
+            - mysql
+        networks:
+            - fidibo
+    php:
+        build:
+            context: .
+        container_name: php_fidibo
+        restart: unless-stopped
+        tty: true
+        volumes:
+            - .:/var/www/app
+        ports:
+            - "${PHP_HOST_PORT}:9000"
+        networks:
+            - fidibo
+
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        container_name: db_fidibo
+        ports:
+            - '${MYSQL_HOST_PORT:-3306}:3306'
+        volumes:
+            - ./deployment/mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        networks:
+            - fidibo
+
+    redis:
+        image: redis:alpine
+        container_name: redis_fidibo
+        restart: unless-stopped
+        environment:
+            - REDIS_PASSWORD='${REDIS_PASSWORD}'
+        ports:
+            - '${REDIS_HOST_PORT:-6379}:6379'
+        volumes:
+            - ./deployment/redis_data:/date
+        networks:
+            - fidibo
+    # redis:
+    #     image: redis:alpine
+    #     container_name: redis_fidibo
+    #     command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+    #     volumes:
+    #         - ./data/redis:/data
+    #     ports:
+    #         - "8002:6379"
+    #     networks:
+    #         - fidibo
+
