@@ -9,7 +9,7 @@ class MysqlSearchReopository implements SearchRepositoryInterface
 {
     public function search(string $keyword): Collection
     {
-        $books = Book::query()->whereRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE)", ['*' . $keyword . '*'])->get();
+        $books = Book::query()->whereRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE)", [$keyword . '*'])->get();
 
         # This is not optimal query.
         # $books = Book::query()->whereFullText('title', $keyword)->get();
