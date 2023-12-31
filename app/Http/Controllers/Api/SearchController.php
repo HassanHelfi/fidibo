@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SearchRequest;
+use App\Http\Resources\SearchResource;
 use App\Services\Search\SearchServices;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class SearchController extends Controller
 {
@@ -12,8 +15,10 @@ class SearchController extends Controller
     {
     }
 
-    public function search()
+    public function search(SearchRequest $request): JsonResponse
     {
-        return $this->searchServices->search(request('search'));
+        $keyword = $request->search;
+        $books = $this->searchServices->search($keyword);
+        return response()->json(SearchResource::collection($books), Response::HTTP_OK);
     }
 }
