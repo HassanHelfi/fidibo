@@ -14,7 +14,7 @@ class SearchTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_example(): void
+    public function test_search(): void
     {
         $book = Book::factory()->create([
             'title' => 'Test Book',
